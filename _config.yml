@@ -1,0 +1,23 @@
+title: "Entity Registry System"
+description: "Documentation for the Entity Registry System — Django REST backend and ERS Console frontend."
+baseurl: "/ers-docs"
+url: "https://sszepe.github.io"
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-seo-tag
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+github:
+  backend_repo: "https://github.com/sszepe/django-ers-solution/tree/dev"
+  console_repo:  "https://github.com/sszepe/ers-console/tree/dev"

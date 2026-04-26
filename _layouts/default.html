@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% if page.title %}{{ page.title }} — {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
+  {% seo %}
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="site-logo" href="{{ '/' | relative_url }}">
+        <span class="logo-mark">ERS</span>
+        <span class="logo-text">Entity Registry System</span>
+      </a>
+      <nav class="top-nav">
+        <a href="{{ '/quickstart/' | relative_url }}" class="top-nav__link {% if page.url contains 'quickstart' %}active{% endif %}">Quickstart</a>
+        <a href="{{ '/docs/user/' | relative_url }}" class="top-nav__link {% if page.url contains '/user/' %}active{% endif %}">User Guide</a>
+        <a href="{{ '/docs/developer/' | relative_url }}" class="top-nav__link {% if page.url contains '/developer/' %}active{% endif %}">Developer</a>
+        <a href="{{ '/docs/admin/' | relative_url }}" class="top-nav__link {% if page.url contains '/admin/' %}active{% endif %}">Admin</a>
+        <a href="https://github.com/sszepe/django-ers-solution/tree/dev" class="top-nav__link top-nav__github" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.body.classList.toggle('nav-open')">&#9776;</button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    {% if page.layout == "doc" %}
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Getting Started</div>
+          <a href="{{ '/quickstart/' | relative_url }}" class="sidebar-link {% if page.url == '/quickstart/' %}sidebar-link--active{% endif %}">Quickstart</a>
+          <a href="{{ '/quickstart/architecture/' | relative_url }}" class="sidebar-link {% if page.url contains 'architecture' %}sidebar-link--active{% endif %}">Architecture Overview</a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">User Guide</div>
+          <a href="{{ '/docs/user/' | relative_url }}" class="sidebar-link {% if page.url == '/docs/user/' %}sidebar-link--active{% endif %}">Introduction</a>
+          <a href="{{ '/docs/user/persons/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/persons' %}sidebar-link--active{% endif %}">Persons</a>
+          <a href="{{ '/docs/user/organisations/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/organisations' %}sidebar-link--active{% endif %}">Organisations</a>
+          <a href="{{ '/docs/user/organigrams/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/organigrams' %}sidebar-link--active{% endif %}">Organigrams</a>
+          <a href="{{ '/docs/user/affiliations/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/affiliations' %}sidebar-link--active{% endif %}">Affiliations</a>
+          <a href="{{ '/docs/user/journals/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/journals' %}sidebar-link--active{% endif %}">Journals</a>
+          <a href="{{ '/docs/user/places/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/places' %}sidebar-link--active{% endif %}">Places</a>
+          <a href="{{ '/docs/user/imports/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/imports' %}sidebar-link--active{% endif %}">Imports</a>
+          <a href="{{ '/docs/user/review/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/review' %}sidebar-link--active{% endif %}">Review Workflow</a>
+          <a href="{{ '/docs/user/audit/' | relative_url }}" class="sidebar-link {% if page.url contains '/user/audit' %}sidebar-link--active{% endif %}">Audit Log</a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Developer Guide</div>
+          <a href="{{ '/docs/developer/' | relative_url }}" class="sidebar-link {% if page.url == '/docs/developer/' %}sidebar-link--active{% endif %}">Overview</a>
+          <a href="{{ '/docs/developer/backend/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/backend' %}sidebar-link--active{% endif %}">Django Backend</a>
+          <a href="{{ '/docs/developer/api/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/api' %}sidebar-link--active{% endif %}">REST API Reference</a>
+          <a href="{{ '/docs/developer/frontend/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/frontend' %}sidebar-link--active{% endif %}">ERS Console (Frontend)</a>
+          <a href="{{ '/docs/developer/data-model/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/data-model' %}sidebar-link--active{% endif %}">Data Model</a>
+          <a href="{{ '/docs/developer/background-tasks/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/background-tasks' %}sidebar-link--active{% endif %}">Background Tasks</a>
+          <a href="{{ '/docs/developer/review-engine/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/review-engine' %}sidebar-link--active{% endif %}">Review Engine</a>
+          <a href="{{ '/docs/developer/audit/' | relative_url }}" class="sidebar-link {% if page.url contains '/developer/audit' %}sidebar-link--active{% endif %}">Audit System</a>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Admin Guide</div>
+          <a href="{{ '/docs/admin/' | relative_url }}" class="sidebar-link {% if page.url == '/docs/admin/' %}sidebar-link--active{% endif %}">Overview</a>
+          <a href="{{ '/docs/admin/deployment/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/deployment' %}sidebar-link--active{% endif %}">Docker Deployment</a>
+          <a href="{{ '/docs/admin/configuration/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/configuration' %}sidebar-link--active{% endif %}">Configuration Reference</a>
+          <a href="{{ '/docs/admin/database/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/database' %}sidebar-link--active{% endif %}">Database & Migrations</a>
+          <a href="{{ '/docs/admin/users/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/users' %}sidebar-link--active{% endif %}">User Management</a>
+          <a href="{{ '/docs/admin/django-admin/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/django-admin' %}sidebar-link--active{% endif %}">Django Admin Panel</a>
+          <a href="{{ '/docs/admin/review-policies/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/review-policies' %}sidebar-link--active{% endif %}">Review Policies</a>
+          <a href="{{ '/docs/admin/monitoring/' | relative_url }}" class="sidebar-link {% if page.url contains '/admin/monitoring' %}sidebar-link--active{% endif %}">Monitoring & Logs</a>
+        </div>
+
+      </nav>
+    </aside>
+    {% endif %}
+
+    <main class="main-content {% if page.layout == 'doc' %}main-content--with-sidebar{% endif %}">
+      {% if page.layout == "doc" %}
+      <article class="doc-article">
+        {% if page.title %}
+        <header class="doc-header">
+          {% if page.section %}<div class="doc-section-label">{{ page.section }}</div>{% endif %}
+          <h1>{{ page.title }}</h1>
+          {% if page.description %}<p class="doc-lead">{{ page.description }}</p>{% endif %}
+        </header>
+        {% endif %}
+        <div class="doc-body">
+          {{ content }}
+        </div>
+      </article>
+      {% else %}
+        {{ content }}
+      {% endif %}
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-logo">ERS</span>
+        <span class="footer-copy">Entity Registry System &mdash; documentation</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/sszepe/django-ers-solution/tree/dev" target="_blank" rel="noopener">Backend repo</a>
+        <a href="https://github.com/sszepe/ers-console/tree/dev" target="_blank" rel="noopener">Console repo</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>
