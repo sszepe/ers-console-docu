@@ -1,14 +1,12 @@
 ---
-layout: doc
+layout: page
 title: Review Policies
-description: Configuring the ReviewPolicy rules that govern the review workflow.
-section: Admin Guide
 permalink: /docs/admin/review-policies/
 ---
 
-## Overview
-
 Review Policies are rules that automatically assign a review status to entity records when they are created or updated. Policies are evaluated in **priority order** (lowest number first); the first matching policy wins.
+
+---
 
 ## Creating a policy
 
@@ -18,20 +16,22 @@ Go to `/admin/review/reviewpolicy/add/`.
 |---|---|
 | `name` | Human-readable name for this rule |
 | `entity_type` | Django model label, e.g. `agents.Person`, `agents.Organisation`, `places.City` |
-| `field_path` | Field to inspect. Leave empty with operator `always` to match all records. Supports dot notation: `country.iso_code`, `external_ids.kind` |
-| `operator` | Comparison operator (see table below) |
-| `value` | Value to compare against (JSON — can be a string, number, or list) |
+| `field_path` | Field to inspect. Leave empty with operator `always` to match all. Supports dot notation: `country.iso_code`, `external_ids.kind` |
+| `operator` | Comparison operator |
+| `value` | Value to compare against (JSON — string, number, or list) |
 | `resulting_status` | Status to assign when this rule matches |
-| `priority` | Evaluation order. Lower = evaluated first. Use multiples of 10 for easy insertion. |
+| `priority` | Evaluation order — lower = first. Use multiples of 10 for easy insertion. |
 | `is_active` | Disable without deleting |
 | `description` | Internal documentation |
 | `review_groups` | Groups assigned to review matching records |
+
+---
 
 ## Operators
 
 | Operator | Example use |
 |---|---|
-| `always` | Apply to all records of this type |
+| `always` | Apply to all records of this type unconditionally |
 | `exact` | `org_type` equals `"university"` |
 | `not_exact` | `imported_from` is not `"ror"` |
 | `in` | `org_type` is one of `["university", "research_institute"]` |
@@ -41,16 +41,20 @@ Go to `/admin/review/reviewpolicy/add/`.
 | `is_not_empty` | `ror` is set |
 | `regex` | `name` matches `"^University of"` |
 
+---
+
 ## Resulting statuses
 
 | Status | Effect |
 |---|---|
-| `DRAFT` | No action needed — record is in draft |
 | `AUTO_APPROVED` | Approved automatically by this rule |
 | `REVIEW_REQUIRED` | Route to review queue for human action |
+| `DRAFT` | No action needed — record stays in draft |
 | `APPROVED` | Mark as approved immediately |
 | `REJECTED` | Mark as rejected immediately |
 | `MANUALLY_CONFIRMED` | Mark as manually confirmed |
+
+---
 
 ## Example policy set
 
@@ -58,7 +62,6 @@ Go to `/admin/review/reviewpolicy/add/`.
 
 | Field | Value |
 |---|---|
-| Name | Auto-approve ROR imports |
 | Entity type | `agents.Organisation` |
 | Field path | `imported_from` |
 | Operator | `exact` |
@@ -70,7 +73,6 @@ Go to `/admin/review/reviewpolicy/add/`.
 
 | Field | Value |
 |---|---|
-| Name | Review manually created persons |
 | Entity type | `agents.Person` |
 | Field path | `imported_from` |
 | Operator | `is_empty` |
@@ -79,18 +81,22 @@ Go to `/admin/review/reviewpolicy/add/`.
 | Priority | `20` |
 | Review groups | `Curators` |
 
-### All other records go to draft
+### Catch-all: everything else goes to draft
 
 | Field | Value |
 |---|---|
-| Name | Default — draft |
 | Entity type | `agents.Person` |
 | Field path | _(empty)_ |
 | Operator | `always` |
 | Resulting status | `DRAFT` |
 | Priority | `999` |
 
-<div class="callout callout--tip">
-  <div class="callout__title">Policy ordering tip</div>
-  Use priority values in multiples of 10 (10, 20, 30 …) so you can always insert a new rule between two existing ones without renumbering.
+<div class="callout callout-tip">
+  <span class="callout-title">Priority tip</span>
+  Use priority values in multiples of 10 (10, 20, 30…) so you can always insert a new rule between existing ones without renumbering.
+</div>
+
+<div class="page-nav">
+  <a href="/ers-docs/docs/admin/django-admin/">← Django Admin Panel</a>
+  <a href="/ers-docs/docs/admin/monitoring/">Monitoring & Logs →</a>
 </div>

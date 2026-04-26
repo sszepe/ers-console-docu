@@ -1,0 +1,11 @@
+// custom.scss — minimal. All doc styles live in _includes/head-custom.html
+// This file just ensures the SCSS import chain works.
+.page-content .wrapper { max-width: 900px; }
+blockquote {
+  border-left: 4px solid #94a3b8;
+  background: #f8fafc;
+  padding: 10px 16px;
+  color: #475569;
+  margin: 1em 0;
+  border-radius: 0 4px 4px 0;
+}

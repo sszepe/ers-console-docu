@@ -1,14 +1,12 @@
 ---
-layout: doc
+layout: page
 title: Journals
-description: Managing academic and scientific journal records.
-section: User Guide
 permalink: /docs/user/journals/
 ---
 
-## Overview
+The **Journals** section maintains an authority list of academic and scientific journals, primarily used as controlled vocabulary for publication metadata in downstream CRIS and repository systems.
 
-The **Journals** section maintains an authority list of academic and scientific journals. Journal records are primarily used as controlled vocabulary for publication metadata in downstream CRIS and repository systems.
+---
 
 ## Key fields
 
@@ -23,6 +21,13 @@ The **Journals** section maintains an authority list of academic and scientific 
 | `publisher` | Publisher name |
 | `is_active` | Whether the journal is currently publishing |
 
+---
+
 ## Importing journals
 
-Journals can be imported from OpenAlex using the background task system. The import resolves ISSNs and matches existing records before creating new ones.
+Journals can be imported from **OpenAlex** using the background task system. The import resolves ISSNs and matches existing records before creating new ones, using SHA-256 payload hash deduplication to skip unchanged entries.
+
+<div class="page-nav">
+  <a href="/ers-docs/docs/user/affiliations/">← Affiliations</a>
+  <a href="/ers-docs/docs/user/places/">Places →</a>
+</div>

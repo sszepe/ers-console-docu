@@ -1,0 +1,254 @@
+<header class="site-header" role="banner">
+  <div class="site-header-inner">
+
+    <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title | escape }}</a>
+
+    <!-- Mobile toggle -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" />
+    <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <rect y="2"  width="20" height="2.5" rx="1.25"/>
+        <rect y="9"  width="20" height="2.5" rx="1.25"/>
+        <rect y="16" width="20" height="2.5" rx="1.25"/>
+      </svg>
+    </label>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="nav-item nav-item--solo" href="{{ '/quickstart/' | relative_url }}">🚀 Quickstart</a>
+
+      <span class="nav-item nav-item--drop">
+        <a href="{{ '/docs/user/' | relative_url }}">User Guide</a>
+        <svg class="chevron" width="10" height="10" viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <div class="drop-menu">
+          <a href="{{ '/docs/user/'              | relative_url }}">Introduction</a>
+          <a href="{{ '/docs/user/persons/'      | relative_url }}">Persons</a>
+          <a href="{{ '/docs/user/organisations/'| relative_url }}">Organisations</a>
+          <a href="{{ '/docs/user/organigrams/'  | relative_url }}">Organigrams</a>
+          <a href="{{ '/docs/user/affiliations/' | relative_url }}">Affiliations</a>
+          <a href="{{ '/docs/user/journals/'     | relative_url }}">Journals</a>
+          <a href="{{ '/docs/user/places/'       | relative_url }}">Places</a>
+          <a href="{{ '/docs/user/imports/'      | relative_url }}">Imports</a>
+          <a href="{{ '/docs/user/review/'       | relative_url }}">Review Workflow</a>
+          <a href="{{ '/docs/user/audit/'        | relative_url }}">Audit Log</a>
+        </div>
+      </span>
+
+      <span class="nav-item nav-item--drop">
+        <a href="{{ '/docs/developer/' | relative_url }}">Developer</a>
+        <svg class="chevron" width="10" height="10" viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <div class="drop-menu">
+          <a href="{{ '/docs/developer/'                  | relative_url }}">Overview</a>
+          <a href="{{ '/docs/developer/backend/'          | relative_url }}">Django Backend</a>
+          <a href="{{ '/docs/developer/api/'              | relative_url }}">REST API Reference</a>
+          <a href="{{ '/docs/developer/frontend/'         | relative_url }}">ERS Console (Frontend)</a>
+          <a href="{{ '/docs/developer/data-model/'       | relative_url }}">Data Model</a>
+          <a href="{{ '/docs/developer/background-tasks/' | relative_url }}">Background Tasks</a>
+          <a href="{{ '/docs/developer/review-engine/'    | relative_url }}">Review Engine</a>
+          <a href="{{ '/docs/developer/audit/'            | relative_url }}">Audit System</a>
+        </div>
+      </span>
+
+      <span class="nav-item nav-item--drop">
+        <a href="{{ '/docs/admin/' | relative_url }}">Admin</a>
+        <svg class="chevron" width="10" height="10" viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <div class="drop-menu drop-menu--right">
+          <a href="{{ '/docs/admin/'                | relative_url }}">Overview</a>
+          <a href="{{ '/docs/admin/deployment/'     | relative_url }}">Docker Deployment</a>
+          <a href="{{ '/docs/admin/configuration/'  | relative_url }}">Configuration Reference</a>
+          <a href="{{ '/docs/admin/database/'       | relative_url }}">Database &amp; Migrations</a>
+          <a href="{{ '/docs/admin/users/'          | relative_url }}">User Management</a>
+          <a href="{{ '/docs/admin/django-admin/'   | relative_url }}">Django Admin Panel</a>
+          <a href="{{ '/docs/admin/review-policies/'| relative_url }}">Review Policies</a>
+          <a href="{{ '/docs/admin/monitoring/'     | relative_url }}">Monitoring &amp; Logs</a>
+        </div>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<style>
+/* ═══════════════════════════════════════════════════════ SITE HEADER ══ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.site-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Site title ───────────────────────────────────────────────────────── */
+.site-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a !important;
+  text-decoration: none !important;
+  white-space: nowrap;
+  margin-right: 28px;
+  flex-shrink: 0;
+}
+.site-title:hover { color: #2563eb !important; }
+
+/* ── Nav container ────────────────────────────────────────────────────── */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+}
+
+/* ── Individual nav items ─────────────────────────────────────────────── */
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 11px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  text-decoration: none;
+  gap: 3px;
+}
+
+.nav-item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-item--solo {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.nav-item:hover,
+.nav-item:hover > a {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.chevron {
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.nav-item--drop:hover .chevron { transform: rotate(180deg); }
+
+/* ── Dropdown menus ───────────────────────────────────────────────────── */
+.drop-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  min-width: 185px;
+  padding: 6px 0;
+  z-index: 300;
+}
+
+.drop-menu--right {
+  left: auto;
+  right: 0;
+}
+
+.drop-menu a {
+  display: block;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #334155;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.1s;
+  border-bottom: none !important;
+}
+
+.drop-menu a:hover {
+  background: #f1f5f9;
+  color: #2563eb;
+}
+
+/* Show on hover — desktop */
+.nav-item--drop:hover .drop-menu { display: block; }
+
+/* ── Mobile toggle (hidden on desktop) ───────────────────────────────── */
+.nav-toggle-cb    { display: none; }
+.nav-toggle-label { display: none; }
+
+/* ═══════════════════════════════════════════════════ MOBILE NAV (<720px) */
+@media (max-width: 720px) {
+  .site-header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 16px;
+    gap: 0;
+  }
+
+  .site-title { flex: 1; margin-right: 0; }
+
+  .nav-toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #475569;
+    padding: 6px;
+  }
+
+  /* Nav hidden by default on mobile */
+  .site-nav {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 8px 0 12px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 8px;
+    gap: 0;
+  }
+
+  /* Show nav when toggle checked */
+  .nav-toggle-cb:checked ~ nav.site-nav { display: flex; }
+
+  .nav-item {
+    height: auto;
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid #f1f5f9;
+    border-left: none !important;
+  }
+
+  /* Mobile dropdowns always visible */
+  .drop-menu {
+    display: block;
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid #e2e8f0;
+    margin: 4px 0 4px 16px;
+    background: #f8fafc;
+    border-radius: 0;
+    padding: 4px 0;
+    min-width: unset;
+  }
+
+  .drop-menu a { padding: 7px 12px; font-size: 13px; }
+  .chevron { display: none; }
+}
+</style>

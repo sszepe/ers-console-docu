@@ -1,23 +1,86 @@
-title: "Entity Registry System"
-description: "Documentation for the Entity Registry System — Django REST backend and ERS Console frontend."
-baseurl: "/ers-docs"
+title: Entity Registry System
+description: Developer, Admin, and User Documentation for the ERS Django backend and ERS Console frontend.
+theme: minima
 url: "https://sszepe.github.io"
-
+baseurl: "/ers-docs"
 markdown: kramdown
-highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
-
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: false
 plugins:
-  - jekyll-seo-tag
+  - jekyll-feed
 
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - node_modules
-  - vendor
+# Minima: suppress auto-generated page list in header (we use header.html override)
+minima:
+  header_pages: []
 
-github:
-  backend_repo: "https://github.com/sszepe/django-ers-solution/tree/dev"
-  console_repo:  "https://github.com/sszepe/ers-console/tree/dev"
+nav:
+  - title: "🚀 Quickstart"
+    url: /quickstart/
+  - title: User Guide
+    url: /docs/user/
+    children:
+      - title: Introduction
+        url: /docs/user/
+      - title: Persons
+        url: /docs/user/persons/
+      - title: Organisations
+        url: /docs/user/organisations/
+      - title: Organigrams
+        url: /docs/user/organigrams/
+      - title: Affiliations
+        url: /docs/user/affiliations/
+      - title: Journals
+        url: /docs/user/journals/
+      - title: Places
+        url: /docs/user/places/
+      - title: Imports
+        url: /docs/user/imports/
+      - title: Review Workflow
+        url: /docs/user/review/
+      - title: Audit Log
+        url: /docs/user/audit/
+  - title: Developer Guide
+    url: /docs/developer/
+    children:
+      - title: Overview
+        url: /docs/developer/
+      - title: Django Backend
+        url: /docs/developer/backend/
+      - title: REST API Reference
+        url: /docs/developer/api/
+      - title: ERS Console (Frontend)
+        url: /docs/developer/frontend/
+      - title: Data Model
+        url: /docs/developer/data-model/
+      - title: Background Tasks
+        url: /docs/developer/background-tasks/
+      - title: Review Engine
+        url: /docs/developer/review-engine/
+      - title: Audit System
+        url: /docs/developer/audit/
+  - title: Admin Guide
+    url: /docs/admin/
+    children:
+      - title: Overview
+        url: /docs/admin/
+      - title: Docker Deployment
+        url: /docs/admin/deployment/
+      - title: Configuration Reference
+        url: /docs/admin/configuration/
+      - title: Database & Migrations
+        url: /docs/admin/database/
+      - title: User Management
+        url: /docs/admin/users/
+      - title: Django Admin Panel
+        url: /docs/admin/django-admin/
+      - title: Review Policies
+        url: /docs/admin/review-policies/
+      - title: Monitoring & Logs
+        url: /docs/admin/monitoring/

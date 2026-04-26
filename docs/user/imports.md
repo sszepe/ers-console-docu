@@ -1,14 +1,14 @@
 ---
-layout: doc
+layout: page
 title: Imports
-description: Importing entity data from external authority sources.
-section: User Guide
 permalink: /docs/user/imports/
 ---
 
-## Overview
+The **Imports** section lets you trigger and monitor data imports from external authority systems.
 
-The **Imports** section lets you trigger and monitor data imports from external authority systems. ERS supports importing from:
+---
+
+## Supported sources
 
 | Source | Entity types | Identifier |
 |---|---|---|
@@ -19,21 +19,23 @@ The **Imports** section lets you trigger and monitor data imports from external 
 | **Wikidata** | Persons, Organisations | Wikidata Q ID |
 | **GeoNames** | Places (Cities) | GeoNames ID |
 
+---
+
 ## Import workflow
 
-<ol class="step-list">
-  <li>Navigate to the <strong>Imports</strong> page in the ERS Console.</li>
-  <li>Select the source system from the dropdown.</li>
-  <li>Enter one or more identifiers, or upload a CSV list.</li>
-  <li>Click <strong>Preview</strong> to see candidate matches against existing registry records.</li>
-  <li>Review the candidates — confirm which records to import or update.</li>
-  <li>Click <strong>Import</strong> to enqueue the task. The <code>qcluster</code> worker will process it in the background.</li>
-  <li>Monitor progress in the import task list.</li>
+<ol class="steps">
+  <li><div><strong>Navigate to Imports</strong> in the ERS Console.</div></li>
+  <li><div><strong>Select the source</strong> system from the dropdown.</div></li>
+  <li><div><strong>Enter identifiers</strong> — one or more IDs, or upload a CSV list.</div></li>
+  <li><div><strong>Preview</strong> candidate matches against existing registry records.</div></li>
+  <li><div><strong>Review candidates</strong> — confirm which records to import or update.</div></li>
+  <li><div><strong>Import</strong> — the task is enqueued and processed by <code>qcluster</code> in the background.</div></li>
+  <li><div><strong>Monitor progress</strong> in the import task list.</div></li>
 </ol>
 
-## Import statuses
+---
 
-Each imported record tracks a `import_last_status`:
+## Import statuses
 
 | Status | Meaning |
 |---|---|
@@ -42,14 +44,20 @@ Each imported record tracks a `import_last_status`:
 | `error` | Import failed — check task logs |
 | `skipped` | No change detected (payload hash matched) |
 
-## Field locking
+---
 
-If you have manually corrected a field on an imported record, add the field name to `import_locked_fields` to prevent the next import run from overwriting it.
+## Field locking & deduplication
 
-## Payload hash deduplication
+- **Field locking** — add a field name to `import_locked_fields` on an imported record to prevent the next run from overwriting it.
+- **Payload hash** — every import stores a SHA-256 hash of the raw source payload in `import_payload_hash`. Records with unchanged payloads are automatically skipped.
 
-Every import stores a SHA-256 hash of the raw source payload in `import_payload_hash`. On subsequent runs, if the hash is unchanged the record is skipped, making repeated imports cheap.
+---
 
 ## Background processing
 
-All import tasks are handled by the `qcluster` django-q2 worker. You can monitor queued and completed tasks in the Django admin under **Django Q → Tasks**.
+All import tasks run in the `qcluster` django-q2 worker. Monitor queued and completed tasks in the Django admin under **Django Q → Tasks**.
+
+<div class="page-nav">
+  <a href="/ers-docs/docs/user/places/">← Places</a>
+  <a href="/ers-docs/docs/user/review/">Review Workflow →</a>
+</div>

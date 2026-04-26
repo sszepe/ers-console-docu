@@ -1,72 +1,104 @@
 ---
-layout: doc
+layout: page
 title: Architecture Overview
-description: How the four Docker services fit together and how data flows through ERS.
-section: Getting Started
 permalink: /quickstart/architecture/
 ---
 
-## Component Overview
-
-ERS is composed of four Docker services orchestrated by a single `docker-compose.yml`:
+## Component diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                          Browser                            │
-└──────────────────────┬──────────────────────────────────────┘
-                       │ :8081 (HTTP_PORT)
-┌──────────────────────▼──────────────────────────────────────┐
-│                        nginx                                │
-│  /cockpit/  →  React SPA (static, built into image)         │
-│  /api/      →  proxy → django:8000                          │
-│  /admin/    →  proxy → django:8000                          │
-│  /static/   →  volume (ManifestStaticFilesStorage)          │
-│  /media/    →  volume                                       │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  django (gunicorn)                          │
-│  3 sync workers · port 8000 (internal only)                 │
-│  Apps: accounts · agents · places · journals                │
-│        audit · review · api                                 │
-└────────────┬──────────────────────────────────┬────────────┘
-             │                                  │
-┌────────────▼────────────┐       ┌─────────────▼────────────┐
-│       PostgreSQL 16      │       │    qcluster (django-q2)  │
-│    ersregistry database  │       │  Background tasks:       │
-│    (shared volume)       │◄──────│  · ROR → Places sync     │
-└─────────────────────────┘       │  · Scheduled imports     │
-                                  └──────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                            Browser                              │
+└────────────────────────────┬────────────────────────────────────┘
+                             │ HTTP_PORT (default 8081)
+┌────────────────────────────▼────────────────────────────────────┐
+│                           nginx                                 │
+│   /cockpit/   →  React SPA (static, baked into image)           │
+│   /assets/    →  Vite chunks (1yr immutable cache)              │
+│   /static/    →  Django collectstatic volume (1yr cache)        │
+│   /media/     →  Django media volume (7d cache)                 │
+│   /api/       →  proxy → django:8000                            │
+│   /accounts/  →  proxy → django:8000                            │
+│   /admin/     →  proxy → django:8000                            │
+│   /health/    →  proxy → django:8000/api/schema/                │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────────────┐
+│                  django (gunicorn, 3 sync workers)              │
+│                          port 8000 (internal only)             │
+│                                                                 │
+│   apps.accounts  │  apps.agents   │  apps.places               │
+│   apps.journals  │  apps.audit    │  apps.review               │
+│                  apps.api                                       │
+└──────────────┬──────────────────────────────┬───────────────────┘
+               │                              │
+┌──────────────▼───────────┐    ┌─────────────▼────────────────┐
+│      PostgreSQL 16        │    │   qcluster (django-q2)       │
+│   (postgres_data volume)  │◄───│   Background tasks:          │
+│                           │    │   · ROR → Places sync        │
+│   Shared by django        │    │   · ORCID / OpenAlex import  │
+│   and qcluster            │    │   · GeoNames city sync       │
+└───────────────────────────┘    └──────────────────────────────┘
 ```
+
+---
 
 ## Request flow
 
-1. The browser loads the React SPA from `nginx` at `/cockpit/`.
-2. The SPA makes AJAX calls to `/api/v1/` — nginx proxies these to the `django` gunicorn server.
-3. Django authenticates the request via session cookie (set by `/accounts/login/`), applies object-level permissions (django-guardian), and returns JSON.
-4. Long-running operations (external API lookups, bulk imports) are enqueued as django-q2 tasks and executed by `qcluster` out of band.
+<ol class="steps">
+  <li><div><strong>Browser loads the SPA</strong> — nginx serves <code>index.html</code> from <code>/cockpit/</code>. Vite-hashed JS/CSS chunks are cached for 1 year.</div></li>
+  <li><div><strong>SPA makes API calls</strong> — all <code>/api/v1/*</code> requests go to nginx, which proxies them to <code>django:8000</code>.</div></li>
+  <li><div><strong>Django authenticates</strong> — session cookie set by <code>/accounts/login/</code>. Object-level permissions checked via django-guardian.</div></li>
+  <li><div><strong>Background work is queued</strong> — import tasks, GeoNames lookups, and ROR syncs are enqueued as django-q2 tasks and run by <code>qcluster</code> out of band.</div></li>
+</ol>
+
+---
+
+## Docker Compose services
+
+| Service | Image | Internal port | Exposed |
+|---|---|---|---|
+| `db` | `postgres:16-alpine` | 5432 | No |
+| `django` | Custom (gunicorn) | 8000 | No |
+| `qcluster` | Same as django | — | No |
+| `nginx` | Custom (nginx 1.27 + SPA) | 80 | `HTTP_PORT` (default 8081) |
+
+**Startup order:** `db` → `django` (waits for `db` healthy) → `qcluster` (waits for `django` healthy) → `nginx` (waits for `django` healthy)
+
+---
 
 ## Django app layout
 
-| App | Responsibility |
+| App | Key responsibility |
 |---|---|
-| `apps.accounts` | Extended `UserProfile` (JSON extra_data), custom `UserAdmin` |
-| `apps.agents` | Person, Organisation, Organigram, OrgNode, OrgUnitFunction, PersonAffiliation |
-| `apps.places` | Country, City (GeoNames-seeded) |
-| `apps.journals` | Journal entity with PIDs |
-| `apps.audit` | Per-request audit middleware, AuditLog model, `AuditAdminMixin` |
-| `apps.review` | ReviewPolicy engine, ObjectReviewState FSM, ReviewTransition history |
-| `apps.api` | DRF ViewSets, serializers, URL routing, `type_config` system |
+| `apps.accounts` | `UserProfile` extending Django's `User` with JSON `extra_data` |
+| `apps.agents` | `Person`, `Organisation`, `Organigram`, `OrgNode`, `OrgUnitFunction`, `PersonAffiliation`, `PersonName` |
+| `apps.places` | `Country`, `City` — seeded from GeoNames |
+| `apps.journals` | `Journal` entity with PIDs (ISSN, eISSN, OpenAlex) |
+| `apps.audit` | `AuditLog`, `AuditRequestMiddleware`, `AuditAdminMixin` |
+| `apps.review` | `ReviewPolicy` engine, `ObjectReviewState` FSM, `ReviewTransition` history |
+| `apps.api` | DRF ViewSets, serializers, URL router, `type_config` controlled vocabulary |
 
-## Frontend (ERS Console)
+---
 
-The `ers-console` repo is a Vite + React + TypeScript SPA. During the Docker build, `npm run build` compiles it to `/app/frontend/dist` which is then baked into the `nginx` image. The SPA is entirely hash-routed (no server-side routing required).
+## Volumes
 
-Pages: Persons · Organisations · Organigrams · Affiliations · Journals · Places · Imports · Configs · Audit · Review
+| Volume | Contents | Used by |
+|---|---|---|
+| `postgres_data` | PostgreSQL data directory | `db` |
+| `django_static` | `collectstatic` output | `django` (write), `nginx` (read-only) |
+| `django_media` | User-uploaded files | `django` (write), `nginx` (read-only), `qcluster` (read) |
 
-## Data storage
+---
 
-- **PostgreSQL 16** (`postgres_data` volume) — all relational data.
-- **django_static** volume — collectstatic output served by nginx with 1-year immutable cache headers.
-- **django_media** volume — user-uploaded files (served with 7-day cache).
-- **django-q2 ORM broker** — task queue stored in the same PostgreSQL database; no Redis required.
+## nginx routing table
+
+| Path pattern | Served from |
+|---|---|
+| `/cockpit/` | SPA `index.html` via `try_files` |
+| `/assets/` | Vite-hashed chunks from nginx html root (1yr cache) |
+| `/static/` | `django_static` volume (1yr immutable cache) |
+| `/media/` | `django_media` volume (7d cache) |
+| `~ ^/(api\|accounts\|admin)/` | Proxied to `django:8000` |
+| `/health/` | Proxied to `django:8000/api/schema/` |
+| `/` | 302 redirect to `/cockpit/` |

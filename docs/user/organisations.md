@@ -1,14 +1,12 @@
 ---
-layout: doc
+layout: page
 title: Organisations
-description: Managing institution, department, and company records in ERS.
-section: User Guide
 permalink: /docs/user/organisations/
 ---
 
-## Overview
-
 An **Organisation** record represents any institution, department, company, or other organisational entity. Organisations are the backbone of the registry: Persons are affiliated to them, Organigrams are owned by them, and Places are associated with them.
+
+---
 
 ## Organisation types
 
@@ -30,15 +28,15 @@ An **Organisation** record represents any institution, department, company, or o
 | `working_group` | Working group or team |
 | `unknown` | Default when type is not yet determined |
 
-Types marked as **sub-unit types** (`faculty`, `institute`, `department`, `chair`, `unit`, `working_group`) are expected to appear as nodes inside an Organigram rather than as standalone top-level organisations.
+Types `faculty`, `institute`, `department`, `chair`, `unit`, and `working_group` are **sub-unit types** — they typically appear as nodes inside an Organigram rather than standalone top-level organisations.
+
+---
 
 ## Identifiers
 
-Organisations carry a rich set of persistent identifiers:
-
 | Identifier | Authority |
 |---|---|
-| **ROR** | Research Organization Registry (preferred — URL format `https://ror.org/…`) |
+| **ROR** | Research Organization Registry — `https://ror.org/…` (unique, enforced) |
 | Alternative RORs | Previous or variant ROR IDs |
 | **GRID** | Global Research Identifier Database (legacy) |
 | **ISNI** | International Standard Name Identifier |
@@ -46,20 +44,18 @@ Organisations carry a rich set of persistent identifiers:
 | **Wikidata ID** | `Q` number |
 | **OpenAlex ID** | `I` number |
 | **FundRef ID** | Crossref Funder Registry |
-| External IDs | Free-form JSON for any other identifiers |
+| **External IDs** | Free-form JSON for any other identifiers |
 
-<div class="callout callout--info">
-  <div class="callout__title">ROR uniqueness</div>
-  The <code>ror</code> field is enforced unique across the database. If you attempt to create a duplicate ROR, the form will return a validation error.
+<div class="callout callout-info">
+  <span class="callout-title">ROR uniqueness</span>
+  The <code>ror</code> field is enforced unique across the database. Attempting to create a duplicate ROR returns a validation error.
 </div>
 
-## Location
+---
 
-Organisations are linked to **Country** and **City** records from the Places module. When an organisation is imported from ROR, its location is resolved automatically via a background task that matches GeoNames data to ERS Place records.
+## Organisation relationships
 
-## Relationships between organisations
-
-The **Organisation Relationships** model records how organisations relate to each other over time:
+The **OrganisationRelationships** model records how organisations relate to each other over time:
 
 | Relationship type | Meaning |
 |---|---|
@@ -73,8 +69,13 @@ The **Organisation Relationships** model records how organisations relate to eac
 | `associate` | Informal association |
 | `rename` | The organisation was renamed |
 
+---
+
 ## Import from ROR
 
-The most common import path is from the Research Organization Registry. The background `qcluster` worker can pull ROR records and create or update Organisation entries, resolving Places and setting `imported_from = "ror"`.
+The most common import path is from the Research Organization Registry. The background `qcluster` worker pulls ROR records and creates or updates Organisation entries, resolving Places and setting `imported_from = "ror"`. On subsequent runs, unchanged records are skipped via SHA-256 payload hash comparison.
 
-On subsequent runs, the import compares the SHA-256 hash of the incoming payload against `import_payload_hash` and skips unchanged records.
+<div class="page-nav">
+  <a href="/ers-docs/docs/user/persons/">← Persons</a>
+  <a href="/ers-docs/docs/user/organigrams/">Organigrams →</a>
+</div>
