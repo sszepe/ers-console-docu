@@ -1,28 +1,34 @@
 ---
-layout: doc
+layout: page
 title: Review Engine
-description: How the ReviewPolicy engine evaluates rules and sets ObjectReviewState.
-section: Developer Guide
 permalink: /docs/developer/review-engine/
 ---
 
 ## Architecture
 
-The review system consists of three models:
+Three models work together:
 
-- **`ReviewPolicy`** — a rule that matches a condition on an entity and assigns a resulting status.
-- **`ObjectReviewState`** — the current review state of a specific object instance (via Django's GenericForeignKey).
-- **`ReviewTransition`** — an immutable log of every status change with actor and comment.
+| Model | Role |
+|---|---|
+| `ReviewPolicy` | Rule that matches a condition on an entity and assigns a resulting status |
+| `ObjectReviewState` | Current review state of a specific object instance (via GenericFK) |
+| `ReviewTransition` | Immutable log of every status change — actor, from/to status, comment, timestamp |
+
+---
 
 ## Policy evaluation
 
-When `set_review_state()` is called (from a signal, ViewSet, or management command), the engine:
+When `set_review_state()` is called, the engine:
 
-1. Loads all active `ReviewPolicy` objects for the entity type, ordered by `priority` (lowest first).
-2. Evaluates each policy's condition against the object's field/JSON path.
-3. The **first matching policy** wins. Its `resulting_status` is assigned to the `ObjectReviewState`.
-4. If no policy matches, the object stays in `DRAFT`.
-5. A `ReviewTransition` record is created for the change.
+<ol class="steps">
+  <li><div>Loads all active <code>ReviewPolicy</code> objects for the entity type, ordered by <code>priority</code> (lowest first).</div></li>
+  <li><div>Evaluates each policy's condition against the object's field or JSON path.</div></li>
+  <li><div>The <strong>first matching policy wins</strong> — its <code>resulting_status</code> is assigned to <code>ObjectReviewState</code>.</div></li>
+  <li><div>If no policy matches, the object stays in its current status (or <code>DRAFT</code> if new).</div></li>
+  <li><div>A <code>ReviewTransition</code> record is created for the change.</div></li>
+</ol>
+
+---
 
 ## Operators
 
@@ -38,14 +44,18 @@ When `set_review_state()` is called (from a signal, ViewSet, or management comma
 | `is_not_empty` | Inverse of above |
 | `regex` | `re.search(policy.value, str(field_value))` |
 
+---
+
 ## Field path resolution
 
 `field_path` supports:
 - Simple field names: `"org_type"`, `"is_active"`
 - Dot-notation JSON paths: `"external_ids.kind"`, `"country.code"`
-- Nested attribute traversal on related objects: `"country.iso_code"`
+- Nested attribute traversal: `"country.iso_code"`
 
 Empty `field_path` with operator `always` matches any record of the entity type.
+
+---
 
 ## Calling the engine
 
@@ -53,7 +63,6 @@ Empty `field_path` with operator `always` matches any record of the entity type.
 from apps.review.services import set_review_state
 from apps.review.models import ReviewStatus
 
-# Called after saving an Organisation:
 state = set_review_state(
     obj=organisation_instance,
     status=ReviewStatus.REVIEW_REQUIRED,  # fallback if no policy matches
@@ -63,9 +72,13 @@ state = set_review_state(
 )
 ```
 
+---
+
 ## API transitions
 
-The `POST /api/v1/review/states/{id}/transition/` endpoint lets authorised users trigger manual transitions:
+```
+POST /api/v1/review/states/{id}/transition/
+```
 
 ```json
 {
@@ -74,11 +87,11 @@ The `POST /api/v1/review/states/{id}/transition/` endpoint lets authorised users
 }
 ```
 
-The transition is validated (only valid `ReviewStatus` values accepted), and a `ReviewTransition` record is created. The `decided_by` and `decided_at` fields on `ObjectReviewState` are updated for terminal decisions (`APPROVED`, `REJECTED`, `MANUALLY_CONFIRMED`).
+The `decided_by` and `decided_at` fields on `ObjectReviewState` are updated for terminal decisions (`APPROVED`, `REJECTED`, `MANUALLY_CONFIRMED`).
 
-## Signals integration
+---
 
-Wire up automatic review evaluation in a model's `post_save` signal:
+## Wiring to signals
 
 ```python
 # apps/agents/signals.py
@@ -92,7 +105,12 @@ def evaluate_person_review(sender, instance, created, **kwargs):
     set_review_state(
         instance,
         default_status="DRAFT",
-        actor=None,   # system action
+        actor=None,
         reason="auto" if not created else "initial",
     )
 ```
+
+<div class="page-nav">
+  <a href="/ers-docs/docs/developer/background-tasks/">← Background Tasks</a>
+  <a href="/ers-docs/docs/developer/audit/">Audit System →</a>
+</div>

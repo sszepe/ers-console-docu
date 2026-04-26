@@ -1,24 +1,10 @@
 ---
-layout: doc
+layout: page
 title: Admin Guide
-description: Deployment, configuration, user management, and operational tasks for ERS administrators.
-section: Admin Guide
 permalink: /docs/admin/
 ---
 
-This guide is for system administrators responsible for deploying and operating the Entity Registry System.
-
-## Sections
-
-- [Docker Deployment](/docs/admin/deployment/) — production deployment with Docker Compose
-- [Configuration Reference](/docs/admin/configuration/) — all `.env` variables documented
-- [Database & Migrations](/docs/admin/database/) — PostgreSQL setup, migrations, backups
-- [User Management](/docs/admin/users/) — creating and managing user accounts
-- [Django Admin Panel](/docs/admin/django-admin/) — using the built-in admin interface
-- [Review Policies](/docs/admin/review-policies/) — configuring the review workflow
-- [Monitoring & Logs](/docs/admin/monitoring/) — log configuration and health checks
-
-## Quick reference: admin URLs
+## Quick reference — admin URLs
 
 | URL | Purpose |
 |---|---|
@@ -30,12 +16,28 @@ This guide is for system administrators responsible for deploying and operating 
 | `/api/schema/swagger-ui/` | Live API documentation |
 | `/health/` | Health probe endpoint |
 
+---
+
 ## First-time setup checklist
 
-1. Copy `.env.example` to `.env` and set `DJANGO_SECRET_KEY` and `POSTGRES_PASSWORD`.
-2. Configure `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` for your domain.
-3. Set `DJANGO_SUPERUSER_*` to auto-create the first admin account.
-4. Run `docker compose up -d`.
-5. Verify all services are healthy: `docker compose ps`.
-6. Log in to `/admin/` and create any additional user accounts.
-7. Configure Review Policies as needed.
+<ol class="steps">
+  <li><div>Copy <code>.env.example</code> to <code>.env</code> and set <code>DJANGO_SECRET_KEY</code> and <code>POSTGRES_PASSWORD</code>.</div></li>
+  <li><div>Set <code>ALLOWED_HOSTS</code> and <code>CSRF_TRUSTED_ORIGINS</code> for your domain.</div></li>
+  <li><div>Optionally set <code>DJANGO_SUPERUSER_*</code> for auto-creation of the first admin account.</div></li>
+  <li><div>Run <code>docker compose up -d</code>.</div></li>
+  <li><div>Verify all services are healthy: <code>docker compose ps</code>.</div></li>
+  <li><div>Log in to <code>/admin/</code> and create any additional user accounts.</div></li>
+  <li><div>Configure <a href="/ers-docs/docs/admin/review-policies/">Review Policies</a> as needed.</div></li>
+</ol>
+
+---
+
+## Sections
+
+- [Docker Deployment](/ers-docs/docs/admin/deployment/)
+- [Configuration Reference](/ers-docs/docs/admin/configuration/)
+- [Database & Migrations](/ers-docs/docs/admin/database/)
+- [User Management](/ers-docs/docs/admin/users/)
+- [Django Admin Panel](/ers-docs/docs/admin/django-admin/)
+- [Review Policies](/ers-docs/docs/admin/review-policies/)
+- [Monitoring & Logs](/ers-docs/docs/admin/monitoring/)

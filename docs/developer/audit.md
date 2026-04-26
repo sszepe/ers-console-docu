@@ -1,39 +1,34 @@
 ---
-layout: doc
+layout: page
 title: Audit System
-description: How the audit middleware and AuditAdminMixin work.
-section: Developer Guide
 permalink: /docs/developer/audit/
 ---
 
 ## Components
 
-The audit system has three parts:
+| Component | Role |
+|---|---|
+| `AuditRequestMiddleware` | Records every mutating HTTP request to `AuditLog` |
+| `AuditAdminMixin` | Adds audit-aware `readonly_fields` and display to Django admin classes |
+| `CurrentUserSignalMiddleware` | Stores current user in thread-local for model signals |
 
-1. **`AuditRequestMiddleware`** — records every mutating HTTP request to `AuditLog`.
-2. **`AuditAdminMixin`** — adds audit-aware `readonly_fields` and display to Django admin classes.
-3. **`CurrentUserSignalMiddleware`** — stores the current user in a thread-local for use in model signals.
+---
 
 ## AuditRequestMiddleware
 
-Sits in `MIDDLEWARE` after authentication. For every request with a mutating method (`POST`, `PUT`, `PATCH`, `DELETE`):
+For every `POST`, `PUT`, `PATCH`, or `DELETE` request, after the response is generated, creates an `AuditLog` entry with:
 
-1. Extracts `request.user` (may be anonymous).
-2. After the response is generated, creates an `AuditLog` entry with:
-   - `user` — the authenticated user (or `None`)
-   - `method` — HTTP method
-   - `path` — request path
-   - `status_code` — response status
-   - `object_type` — inferred from path (best-effort, GenericFK)
-   - `object_id` — extracted from path or response body
-   - `changes` — JSON diff (for `PATCH`/`PUT` if body is parseable JSON)
+- `user` — authenticated user (or `None` for anonymous)
+- `method` — HTTP method
+- `path` — request path
+- `status_code` — response status
+- `object_type` — inferred from path (GenericFK, best-effort)
+- `object_id` — extracted from path or response body
+- `changes` — JSON diff for `PATCH`/`PUT` when body is parseable JSON
+
+---
 
 ## AuditAdminMixin
-
-Apply to any `ModelAdmin` class to automatically:
-
-- Add `created_at`, `updated_at`, `created_by`, `updated_by` to `readonly_fields`.
-- Display the audit history inline in the change view.
 
 ```python
 from apps.audit.admin import AuditAdminMixin
@@ -43,9 +38,13 @@ class MyModelAdmin(AuditAdminMixin, admin.ModelAdmin):
     …
 ```
 
+Automatically adds `created_at`, `updated_at`, `created_by`, `updated_by` to `readonly_fields` and shows the audit history inline on the change view.
+
+---
+
 ## CurrentUserSignalMiddleware
 
-Stores `request.user` in a module-level thread-local (`_thread_locals.user`). Use the helper function in signals or model `save()` methods when you need to attribute a change to the current HTTP user without passing the request explicitly:
+Stores `request.user` in a module-level thread-local. Use `get_current_user()` in signals or model `save()` methods:
 
 ```python
 from apps.api.middleware import get_current_user
@@ -58,9 +57,11 @@ class MyModel(models.Model):
         super().save(*args, **kwargs)
 ```
 
+---
+
 ## django-reversion integration
 
-Models decorated with `@reversion.register()` get automatic version snapshots on every save:
+Decorate models for full version history:
 
 ```python
 import reversion
@@ -70,7 +71,7 @@ class Person(models.Model):
     …
 ```
 
-To access version history programmatically:
+Access version history programmatically:
 
 ```python
 from reversion.models import Version
@@ -80,4 +81,9 @@ for v in versions:
     print(v.revision.date_created, v.field_dict)
 ```
 
-Version rollback is available through the Django admin's history view.
+Version rollback is available through the Django admin history view. Registered models: `Person`, `Organisation`, `Organigram`, `OrgNode`, `OrgUnitFunction`.
+
+<div class="page-nav">
+  <a href="/ers-docs/docs/developer/review-engine/">← Review Engine</a>
+  <a href="/ers-docs/docs/admin/">Admin Guide →</a>
+</div>

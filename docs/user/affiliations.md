@@ -1,14 +1,12 @@
 ---
-layout: doc
+layout: page
 title: Affiliations
-description: Managing Person ↔ Organisation membership records.
-section: User Guide
 permalink: /docs/user/affiliations/
 ---
 
-## What is an Affiliation?
+A **PersonAffiliation** links a Person to an Organisation for a specific role over a date range. Affiliations are the core way ERS models employment, membership, and research group participation.
 
-A **PersonAffiliation** record links a Person to an Organisation for a specific role over a date range. Affiliations are the core way ERS models employment, membership, and research group participation.
+---
 
 ## Fields
 
@@ -21,39 +19,27 @@ A **PersonAffiliation** record links a Person to an Organisation for a specific 
 | `is_primary` | Whether this is the person's primary affiliation |
 | `valid_from` | Start date (inclusive) |
 | `valid_to` | End date (inclusive); blank = currently active |
-| `source` | How this affiliation was established (`manual`, `orcid`, `ror`, etc.) |
+| `source` | How this was established: `manual`, `orcid`, `ror`… |
 | `external_id` | The ID in the source system |
 | `notes` | Internal notes |
 
+---
+
 ## Affiliation roles
 
-| Role value | Label |
-|---|---|
-| `member` | Member |
-| `researcher` | Researcher |
-| `professor` | Professor |
-| `associate_professor` | Associate Professor |
-| `assistant_professor` | Assistant Professor |
-| `postdoc` | Postdoctoral researcher |
-| `phd_student` | PhD student |
-| `manager` | Manager |
-| `director` | Director |
-| `dean` | Dean |
-| `rector` | Rector / President |
-| `admin` | Administrative staff |
-| `technical` | Technical staff |
-| `emeritus` | Emeritus |
-| `visiting` | Visiting researcher |
-| `honorary` | Honorary |
-| `other` | Other |
+`member` · `researcher` · `professor` · `associate_professor` · `assistant_professor` · `postdoc` · `phd_student` · `manager` · `director` · `dean` · `rector` · `admin` · `technical` · `emeritus` · `visiting` · `honorary` · `other`
+
+---
 
 ## Editing affiliations
 
-Affiliations can be managed from two places:
+Affiliations can be managed from:
+- The **Affiliations** section in the ERS Console (full list with filtering)
+- The **Affiliations inline** on a Person or Organisation detail view
 
-- The **Affiliations** section in the ERS Console (full list with filtering).
-- The **Affiliations inline** on a Person or Organisation detail view (context-scoped).
+An affiliation without a `valid_to` date is considered **currently active**. Historical affiliations are retained for provenance.
 
-## Current vs. historical
-
-An affiliation without a `valid_to` date is considered **currently active**. Historical affiliations (with `valid_to` in the past) are retained for provenance and are shown in a separate tab on the person detail view.
+<div class="page-nav">
+  <a href="/ers-docs/docs/user/organigrams/">← Organigrams</a>
+  <a href="/ers-docs/docs/user/journals/">Journals →</a>
+</div>
